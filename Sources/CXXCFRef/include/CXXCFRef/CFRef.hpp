@@ -19,7 +19,7 @@ class CFRef final {
 public:
 	CFRef() noexcept = default;
 
-	explicit CFRef(std::nullptr_t) noexcept;
+	CFRef(std::nullptr_t) noexcept;
 	explicit CFRef(T object CF_RELEASES_ARGUMENT) noexcept;
 
 	CFRef(const CFRef& other) noexcept;
