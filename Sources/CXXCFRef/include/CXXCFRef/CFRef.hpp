@@ -26,7 +26,7 @@ class CFRef final {
 public:
 	static_assert(std::is_pointer_v<T>, "CFRef only supports Core Foundation pointer types.");
 #if __has_feature(objc_arc)
-	static_assert(!std::is_convertible_v<T, id>, "Use native ARC for Objective-C types; CFRef is for Core Foundation only.");
+	static_assert(!std::is_convertible_v<T, id> || (sizeof(T) == sizeof(CFTypeRef)), "Use native ARC for Objective-C types; CFRef is for Core Foundation only.");
 #endif
 
 	CFRef() noexcept = default;
