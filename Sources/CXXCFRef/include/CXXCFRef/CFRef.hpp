@@ -20,7 +20,7 @@ public:
 	CFRef() noexcept = default;
 
 	CFRef(std::nullptr_t) noexcept;
-	explicit CFRef(T object CF_RELEASES_ARGUMENT) noexcept;
+	explicit CFRef(T _Nullable object CF_RELEASES_ARGUMENT) noexcept;
 
 	CFRef(const CFRef& other) noexcept;
 	CFRef& operator=(const CFRef& other) noexcept;
@@ -63,7 +63,7 @@ inline CFRef<T>::CFRef(std::nullptr_t) noexcept
 {}
 
 template <typename T>
-inline CFRef<T>::CFRef(T object CF_RELEASES_ARGUMENT) noexcept
+inline CFRef<T>::CFRef(T _Nullable object CF_RELEASES_ARGUMENT) noexcept
 : object_{object}
 {}
 
