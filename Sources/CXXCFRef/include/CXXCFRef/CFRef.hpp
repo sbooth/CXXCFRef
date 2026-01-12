@@ -121,6 +121,7 @@ public:
 	T _Nullable * _Nonnull put() && = delete;
 
 private:
+	/// The managed Core Foundation object.
 	T object_{nullptr};
 };
 
