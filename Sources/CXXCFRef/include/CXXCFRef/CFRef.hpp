@@ -44,6 +44,9 @@ public:
 	/// Returns the managed object.
 	[[nodiscard]] operator T() const noexcept;
 
+	/// Resets the managed object and returns a pointer to the internal storage.
+	[[nodiscard]] T _Nullable * _Nonnull operator&() noexcept;
+
 
 	/// Returns the managed object.
 	[[nodiscard]] T _Nullable get() const noexcept;
@@ -115,6 +118,13 @@ template <typename T>
 inline CFRef<T>::operator T() const noexcept
 {
 	return object_;
+}
+
+template <typename T>
+inline T _Nullable * _Nonnull CFRef<T>::operator&() noexcept
+{
+	reset();
+	return &object_;
 }
 
 
