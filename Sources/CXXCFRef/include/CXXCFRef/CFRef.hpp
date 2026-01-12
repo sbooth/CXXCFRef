@@ -26,7 +26,7 @@ class CFRef final {
 public:
 	static_assert(std::is_pointer_v<T>, "CFRef only supports Core Foundation pointer types");
 #if __has_feature(objc_arc)
-	static_assert(!std::is_convertible_v<T, id>, "Use native ARC for Objective-C types");
+	static_assert(!std::is_convertible_v<T, id>, "Use ARC for Objective-C types");
 #endif
 
 	CFRef() noexcept = default;
@@ -56,18 +56,19 @@ public:
 	/// Returns the managed object.
 	[[nodiscard]] operator T() const noexcept;
 
-	/// Resets the managed object and returns a pointer to the internal storage.
-	[[nodiscard]] T _Nullable * _Nonnull operator&() noexcept;
-
 
 	/// Returns the managed object.
 	[[nodiscard]] T _Nullable get() const noexcept;
 
-	/// Replaces the managed object with another object.
-	/// @note The object assumes responsibility for releasing the passed object using CFRelease.
+	/// Resets the managed object and returns a pointer to the internal storage.
+	/// @note The CFRef will assume responsibility for releasing any object written to its storage using CFRelease.
+	[[nodiscard]] T _Nullable * _Nonnull put() noexcept;
+
+	/// Replaces the managed object with another owned object.
+	/// @note The CFRef assumes responsibility for releasing the passed object using CFRelease.
 	void reset(T _Nullable object CF_RELEASES_ARGUMENT = nullptr) noexcept;
 
-	/// Swaps the managed object with the managed object from another wrapper.
+	/// Swaps the managed object with the managed object from another CFRef.
 	void swap(CFRef& other) noexcept;
 
 	/// Releases ownership of the managed object and returns it.
@@ -137,18 +138,18 @@ inline CFRef<T>::operator T() const noexcept
 	return object_;
 }
 
-template <typename T>
-inline T _Nullable * _Nonnull CFRef<T>::operator&() noexcept
-{
-	reset();
-	return &object_;
-}
-
 
 template <typename T>
 inline T _Nullable CFRef<T>::get() const noexcept
 {
 	return object_;
+}
+
+template <typename T>
+inline T _Nullable * _Nonnull CFRef<T>::put() noexcept
+{
+	reset();
+	return &object_;
 }
 
 template <typename T>
