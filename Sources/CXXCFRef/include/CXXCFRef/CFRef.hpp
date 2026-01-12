@@ -29,15 +29,26 @@ public:
 	static_assert(!std::is_convertible_v<T, id>, "Use ARC for Objective-C types");
 #endif
 
+	/// Returns a CFRef for an owned object.
+	/// @note The CFRef assumes responsibility for releasing the passed object using CFRelease.
+	static CFRef adopt(T _Nullable object CF_RELEASES_ARGUMENT) noexcept;
+
+	/// Returns a CFRef for an unowned object.
+	/// @note The CFRef retains the passed object using CFRetain and assumes responsibility for releasing it using CFRelease..
+	static CFRef retain(T _Nullable object) noexcept;
+
+
 	CFRef() noexcept = default;
 
 	CFRef(std::nullptr_t) noexcept;
 
 	/// Constructor for owned objects obtained via the Create rule.
+	/// @note The CFRef assumes responsibility for releasing the passed object using CFRelease.
 	/// @seealso https://developer.apple.com/library/archive/documentation/CoreFoundation/Conceptual/CFMemoryMgmt/Concepts/Ownership.html#//apple_ref/doc/uid/20001148-103029
 	explicit CFRef(T _Nullable object CF_RELEASES_ARGUMENT) noexcept;
 
 	/// Constructor for unowned objects obtained via the Get rule.
+	/// @note The CFRef retains the passed object using CFRetain and assumes responsibility for releasing it using CFRelease..
 	/// @seealso https://developer.apple.com/library/archive/documentation/CoreFoundation/Conceptual/CFMemoryMgmt/Concepts/Ownership.html#//apple_ref/doc/uid/20001148-SW1
 	CFRef(T _Nullable object, retain_t) noexcept;
 
@@ -80,6 +91,19 @@ private:
 };
 
 // MARK: - Implementation -
+
+template <typename T>
+inline CFRef<T> CFRef<T>::adopt(T _Nullable object CF_RELEASES_ARGUMENT) noexcept
+{
+	return CFRef(object);
+}
+
+template <typename T>
+inline CFRef<T> CFRef<T>::retain(T _Nullable object) noexcept
+{
+	return CFRef(object, retain);
+}
+
 
 template <typename T>
 inline CFRef<T>::CFRef(std::nullptr_t) noexcept
