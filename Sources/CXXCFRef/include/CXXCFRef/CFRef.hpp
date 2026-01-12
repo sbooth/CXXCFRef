@@ -34,11 +34,11 @@ public:
 	CFRef(std::nullptr_t) noexcept;
 
 	/// Constructor for owned objects obtained via the Create rule.
-	/// @seealso https://leopard-adc.pepas.com/documentation/CoreFoundation/Conceptual/CFMemoryMgmt/Concepts/Ownership.html#//apple_ref/doc/uid/20001148-103029
+	/// @seealso https://developer.apple.com/library/archive/documentation/CoreFoundation/Conceptual/CFMemoryMgmt/Concepts/Ownership.html#//apple_ref/doc/uid/20001148-103029
 	explicit CFRef(T _Nullable object CF_RELEASES_ARGUMENT) noexcept;
 
 	/// Constructor for unowned objects obtained via the Get rule.
-	/// @seealso https://leopard-adc.pepas.com/documentation/CoreFoundation/Conceptual/CFMemoryMgmt/Concepts/Ownership.html#//apple_ref/doc/uid/20001148-SW1
+	/// @seealso https://developer.apple.com/library/archive/documentation/CoreFoundation/Conceptual/CFMemoryMgmt/Concepts/Ownership.html#//apple_ref/doc/uid/20001148-SW1
 	CFRef(T _Nullable object, retain_t) noexcept;
 
 	CFRef(const CFRef& other) noexcept;
