@@ -26,7 +26,7 @@ struct cf_deleter {
 };
 
 template <typename T>
-using cf_unique_ptr = std::unique_ptr<std::remove_pointer_t<T>, cf_deleter>;
+using cf_ptr = std::unique_ptr<std::remove_pointer_t<T>, cf_deleter>;
 ``` 
 
 Or a C-based approach:
