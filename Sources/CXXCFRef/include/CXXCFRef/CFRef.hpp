@@ -35,9 +35,6 @@ public:
 	[[nodiscard]] explicit operator bool() const noexcept;
 
 	/// Returns the managed object.
-	[[nodiscard]] T operator *() const noexcept;
-
-	/// Returns the managed object.
 	[[nodiscard]] operator T() const noexcept;
 
 
@@ -113,12 +110,6 @@ template <typename T>
 inline CFRef<T>::operator bool() const noexcept
 {
 	return object_ != nullptr;
-}
-
-template <typename T>
-inline T CFRef<T>::operator*() const noexcept
-{
-	return object_;
 }
 
 template <typename T>
