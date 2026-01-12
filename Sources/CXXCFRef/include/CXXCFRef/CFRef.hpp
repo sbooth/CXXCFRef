@@ -69,21 +69,13 @@ inline CFRef<T>::CFRef(T _Nullable object CF_RELEASES_ARGUMENT) noexcept
 
 template <typename T>
 inline CFRef<T>::CFRef(const CFRef& other) noexcept
-: object_(other.object_)
-{
-	if(object_)
-		CFRetain(object_);
-}
+: object_{other.object_ ? CFRetain(other.object_) : nullptr}
+{}
 
 template <typename T>
 inline CFRef<T>& CFRef<T>::operator=(const CFRef& other) noexcept
 {
-	if(this != &other) {
-		if(auto old = std::exchange(object_, other.object_); old)
-			CFRelease(old);
-		if(object_)
-			CFRetain(object_);
-	}
+	reset(other.object_ ? CFRetain(other.object_) : nullptr);
 	return *this;
 }
 
