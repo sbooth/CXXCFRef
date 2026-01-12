@@ -72,11 +72,11 @@ public:
 
 
 	/// Returns the managed object.
-	[[nodiscard]] T _Nullable get() const noexcept;
+	[[nodiscard]] T _Nullable get() const & noexcept;
 
 	/// Resets the managed object and returns a pointer to the internal storage.
 	/// @note The CFRef will assume responsibility for releasing any object written to its storage using CFRelease.
-	[[nodiscard]] T _Nullable * _Nonnull put() noexcept;
+	[[nodiscard]] T _Nullable * _Nonnull put() & noexcept;
 
 	/// Replaces the managed object with another owned object.
 	/// @note The CFRef assumes responsibility for releasing the passed object using CFRelease.
@@ -88,6 +88,9 @@ public:
 	/// Releases ownership of the managed object and returns it.
 	/// @note The caller assumes responsibility for releasing the returned object using CFRelease.
 	[[nodiscard]] T _Nullable release() noexcept CF_RETURNS_RETAINED;
+
+	T _Nullable get() const && = delete;
+	T _Nullable * _Nonnull put() && = delete;
 
 private:
 	T object_{nullptr};
@@ -167,13 +170,13 @@ inline CFRef<T>::operator T() const noexcept
 
 
 template <typename T>
-inline T _Nullable CFRef<T>::get() const noexcept
+inline T _Nullable CFRef<T>::get() const & noexcept
 {
 	return object_;
 }
 
 template <typename T>
-inline T _Nullable * _Nonnull CFRef<T>::put() noexcept
+inline T _Nullable * _Nonnull CFRef<T>::put() & noexcept
 {
 	reset();
 	return &object_;
