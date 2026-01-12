@@ -36,13 +36,15 @@ public:
 	// MARK: Factory Methods
 
 	/// Constructs and returns a CFRef for an owned object.
-	/// @note The CFRef assumes responsibility for releasing the passed object using CFRelease.
+	///
+	/// The CFRef assumes responsibility for releasing the passed object using CFRelease.
 	/// @param object A Core Foundation object or null.
 	/// @return A CFRef object.
 	static CFRef adopt(T _Nullable object CF_RELEASES_ARGUMENT) noexcept;
 
 	/// Constructs and returns a CFRef for an unowned object.
-	/// @note The CFRef retains the passed object using CFRetain and assumes responsibility for releasing it using CFRelease..
+	///
+	/// The CFRef retains the passed object using CFRetain and assumes responsibility for releasing it using CFRelease..
 	/// @param object A Core Foundation object or null.
 	/// @return A CFRef object.
 	static CFRef retain(T _Nullable object) noexcept;
@@ -56,12 +58,14 @@ public:
 	CFRef(std::nullptr_t) noexcept;
 
 	/// Constructs a CFRef with an owned object.
-	/// @note The CFRef assumes responsibility for releasing the passed object using CFRelease.
+	///
+	/// The CFRef assumes responsibility for releasing the passed object using CFRelease.
 	/// @param object A Core Foundation object or null.
 	explicit CFRef(T _Nullable object CF_RELEASES_ARGUMENT) noexcept;
 
 	/// Constructs a CFRef with an unowned object.
-	/// @note The CFRef retains the passed object using CFRetain and assumes responsibility for releasing it using CFRelease..
+	///
+	/// The CFRef retains the passed object using CFRetain and assumes responsibility for releasing it using CFRelease..
 	/// @param object A Core Foundation object or null.
 	CFRef(T _Nullable object, retain_t) noexcept;
 
@@ -99,12 +103,14 @@ public:
 	[[nodiscard]] T _Nullable get() const & noexcept;
 
 	/// Resets the managed object and returns a pointer to the internal storage.
-	/// @note The CFRef will assume responsibility for releasing any object written to its storage using CFRelease.
+	///
+	/// The CFRef will assume responsibility for releasing any object written to its storage using CFRelease.
 	/// @return A pointer to a null Core Foundation object.
 	[[nodiscard]] T _Nullable * _Nonnull put() & noexcept;
 
 	/// Replaces the managed object with another owned object.
-	/// @note The CFRef assumes responsibility for releasing the passed object using CFRelease.
+	///
+	/// The CFRef assumes responsibility for releasing the passed object using CFRelease.
 	/// @param object A Core Foundation object or null.
 	void reset(T _Nullable object CF_RELEASES_ARGUMENT = nullptr) noexcept;
 
@@ -113,7 +119,8 @@ public:
 	void swap(CFRef& other) noexcept;
 
 	/// Releases ownership of the managed object and returns it.
-	/// @note The caller assumes responsibility for releasing the returned object using CFRelease.
+	///
+	/// The caller assumes responsibility for releasing the returned object using CFRelease.
 	/// @return A Core Foundation object or null.
 	[[nodiscard]] T _Nullable release() noexcept CF_RETURNS_RETAINED;
 
