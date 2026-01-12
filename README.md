@@ -1,6 +1,6 @@
 # CXXCFRef
 
-A simple [`RAII`](https://en.cppreference.com/w/cpp/language/raii.html) wrapper for [`Core Foundation`](https://developer.apple.com/documentation/corefoundation) objects.
+A simple [RAII](https://en.cppreference.com/w/cpp/language/raii.html) wrapper for [Core Foundation](https://developer.apple.com/documentation/corefoundation) objects.
 
 > [!NOTE]
 > C++17 is required.
