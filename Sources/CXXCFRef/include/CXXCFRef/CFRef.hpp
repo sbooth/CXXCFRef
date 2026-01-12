@@ -81,7 +81,7 @@ inline CFRef<T>& CFRef<T>::operator=(const CFRef& other) noexcept
 
 template <typename T>
 inline CFRef<T>::CFRef(CFRef&& other) noexcept
-: object_(other.release())
+: object_{other.release()}
 {}
 
 template <typename T>
