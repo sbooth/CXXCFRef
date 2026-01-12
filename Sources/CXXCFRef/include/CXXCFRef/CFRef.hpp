@@ -121,7 +121,7 @@ inline CFRef<T>::CFRef(T _Nullable object, retain_t) noexcept
 
 template <typename T>
 inline CFRef<T>::CFRef(const CFRef& other) noexcept
-: object_{other.object_ ? (T)CFRetain(other.object_) : nullptr}
+: CFRef{other.object_, retain}
 {}
 
 template <typename T>
