@@ -16,7 +16,7 @@ namespace CXXCFRef {
 
 /// Tag used to signal that CFRef should retain the Core Foundation object upon construction.
 struct retain_t {
-	explicit retain_t() = default;
+	explicit retain_t() noexcept = default;
 };
 constexpr retain_t retain;
 
