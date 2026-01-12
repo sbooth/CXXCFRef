@@ -33,10 +33,12 @@ public:
 
 	CFRef(std::nullptr_t) noexcept;
 
-	/// Constructor for +1 references obtained via the Create or Copy rule.
+	/// Constructor for owned objects obtained via the Create rule.
+	/// @seealso https://leopard-adc.pepas.com/documentation/CoreFoundation/Conceptual/CFMemoryMgmt/Concepts/Ownership.html#//apple_ref/doc/uid/20001148-103029
 	explicit CFRef(T _Nullable object CF_RELEASES_ARGUMENT) noexcept;
 
-	/// Constructor for +0 references obtained via the Get rule.
+	/// Constructor for unowned objects obtained via the Get rule.
+	/// @seealso https://leopard-adc.pepas.com/documentation/CoreFoundation/Conceptual/CFMemoryMgmt/Concepts/Ownership.html#//apple_ref/doc/uid/20001148-SW1
 	CFRef(T _Nullable object, retain_t) noexcept;
 
 	CFRef(const CFRef& other) noexcept;
