@@ -14,10 +14,11 @@
 
 namespace CXXCFRef {
 
-/// Tag used to signal that CFRef should retain the Core Foundation object upon construction.
+/// Tag denoting that a Core Foundation object is unowned and should be retained.
 struct retain_t {
 	explicit retain_t() noexcept = default;
 };
+/// The Core Foundation object is unowned and should be retained.
 constexpr retain_t retain;
 
 /// A simple RAII wrapper for Core Foundation objects.
@@ -107,7 +108,7 @@ inline CFRef<T> CFRef<T>::adopt(T _Nullable object CF_RELEASES_ARGUMENT) noexcep
 template <typename T>
 inline CFRef<T> CFRef<T>::retain(T _Nullable object) noexcept
 {
-	return CFRef{object, retain};
+	return CFRef{object, CXXCFRef::retain};
 }
 
 
