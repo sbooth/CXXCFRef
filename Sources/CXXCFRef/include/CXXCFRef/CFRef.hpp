@@ -98,13 +98,13 @@ private:
 template <typename T>
 inline CFRef<T> CFRef<T>::adopt(T _Nullable object CF_RELEASES_ARGUMENT) noexcept
 {
-	return CFRef(object);
+	return CFRef{object};
 }
 
 template <typename T>
 inline CFRef<T> CFRef<T>::retain(T _Nullable object) noexcept
 {
-	return CFRef(object, retain);
+	return CFRef{object, retain};
 }
 
 
@@ -124,7 +124,7 @@ inline CFRef<T>::CFRef(T _Nullable object, retain_t) noexcept
 
 template <typename T>
 inline CFRef<T>::CFRef(const CFRef& other) noexcept
-: CFRef{other.object_, retain}
+: CFRef{other.object_, CXXCFRef::retain}
 {}
 
 template <typename T>
