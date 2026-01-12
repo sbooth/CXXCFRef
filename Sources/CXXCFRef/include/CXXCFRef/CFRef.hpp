@@ -7,6 +7,7 @@
 
 #pragma once
 
+#import <type_traits>
 #import <utility>
 
 #import <CoreFoundation/CoreFoundation.h>
@@ -17,9 +18,15 @@ namespace CXXCFRef {
 template <typename T>
 class CFRef final {
 public:
+	static_assert(std::is_pointer_v<T>, "CFRef only supports Core Foundation pointer types.");
+#if __has_feature(objc_arc)
+	static_assert(!std::is_convertible_v<T, id>, "Use native ARC for Objective-C types; CFRef is for Core Foundation only.");
+#endif
+
 	CFRef() noexcept = default;
 
 	CFRef(std::nullptr_t) noexcept;
+	/// Constructor for +1 references obtained via the Create or Copy rule
 	explicit CFRef(T _Nullable object CF_RELEASES_ARGUMENT) noexcept;
 
 	CFRef(const CFRef& other) noexcept;
@@ -69,13 +76,13 @@ inline CFRef<T>::CFRef(T _Nullable object CF_RELEASES_ARGUMENT) noexcept
 
 template <typename T>
 inline CFRef<T>::CFRef(const CFRef& other) noexcept
-: object_{other.object_ ? CFRetain(other.object_) : nullptr}
+: object_{other.object_ ? (T)CFRetain(other.object_) : nullptr}
 {}
 
 template <typename T>
 inline CFRef<T>& CFRef<T>::operator=(const CFRef& other) noexcept
 {
-	reset(other.object_ ? CFRetain(other.object_) : nullptr);
+	reset(other.object_ ? (T)CFRetain(other.object_) : nullptr);
 	return *this;
 }
 
