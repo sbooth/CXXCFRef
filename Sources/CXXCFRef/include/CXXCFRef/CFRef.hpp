@@ -29,6 +29,9 @@ public:
 	static_assert(!std::is_convertible_v<T, id>, "Use ARC for Objective-C types");
 #endif
 
+	/// The managed Core Foundation object type.
+	using element_type = T;
+
 	/// Returns a CFRef for an owned object.
 	/// @note The CFRef assumes responsibility for releasing the passed object using CFRelease.
 	static CFRef adopt(T _Nullable object CF_RELEASES_ARGUMENT) noexcept;
