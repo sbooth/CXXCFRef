@@ -14,6 +14,12 @@
 
 namespace CXXCFRef {
 
+/// Tag used to signal that CFRef should retain the Core Foundation object upon construction.
+struct retain_t {
+	explicit retain_t() = default;
+};
+constexpr retain_t retain;
+
 /// A simple RAII wrapper for Core Foundation objects.
 template <typename T>
 class CFRef final {
@@ -26,8 +32,12 @@ public:
 	CFRef() noexcept = default;
 
 	CFRef(std::nullptr_t) noexcept;
-	/// Constructor for +1 references obtained via the Create or Copy rule
+
+	/// Constructor for +1 references obtained via the Create or Copy rule.
 	explicit CFRef(T _Nullable object CF_RELEASES_ARGUMENT) noexcept;
+
+	/// Constructor for +0 references obtained via the Get rule.
+	CFRef(T _Nullable object, retain_t) noexcept;
 
 	CFRef(const CFRef& other) noexcept;
 	CFRef& operator=(const CFRef& other) noexcept;
@@ -75,6 +85,11 @@ inline CFRef<T>::CFRef(std::nullptr_t) noexcept
 template <typename T>
 inline CFRef<T>::CFRef(T _Nullable object CF_RELEASES_ARGUMENT) noexcept
 : object_{object}
+{}
+
+template <typename T>
+inline CFRef<T>::CFRef(T _Nullable object, retain_t) noexcept
+: object_{object ? (T)CFRetain(object) : nullptr}
 {}
 
 template <typename T>
