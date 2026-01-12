@@ -25,7 +25,7 @@ constexpr retain_t retain;
 template <typename T>
 class CFRef final {
 public:
-	static_assert(std::is_pointer_v<T>, "CFRef only supports Core Foundation pointer types");
+	static_assert(std::is_pointer_v<T>, "CFRef only supports Core Foundation opaque objects");
 #if __has_feature(objc_arc)
 	static_assert(!std::is_convertible_v<T, id>, "Use ARC for Objective-C types");
 #endif
