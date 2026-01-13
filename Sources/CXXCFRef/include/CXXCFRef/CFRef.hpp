@@ -14,12 +14,13 @@
 
 namespace CXXCFRef {
 
-/// Tag denoting that a Core Foundation object is unowned and should be retained.
-struct retain_t {
-	explicit retain_t() noexcept = default;
+/// Tag indicating that a Core Foundation object is unowned and that the constructor should retain it.
+struct retain_ref_t {
+	explicit retain_ref_t() noexcept = default;
 };
-/// The Core Foundation object is unowned and should be retained.
-constexpr retain_t retain;
+
+/// The Core Foundation object is unowned and the constructor should retain it.
+constexpr retain_ref_t retain_ref;
 
 /// A simple RAII wrapper for Core Foundation objects.
 template <typename T>
@@ -67,7 +68,7 @@ public:
 	///
 	/// The CFRef retains the passed object using CFRetain and assumes responsibility for releasing it using CFRelease..
 	/// @param object A Core Foundation object or null.
-	CFRef(T _Nullable object, retain_t) noexcept;
+	CFRef(T _Nullable object, retain_ref_t) noexcept;
 
 	/// Constructs a copy of an existing CFRef.
 	/// @param other A CFRef object.
@@ -145,7 +146,7 @@ inline CFRef<T> CFRef<T>::adopt(T _Nullable object CF_RELEASES_ARGUMENT) noexcep
 template <typename T>
 inline CFRef<T> CFRef<T>::retain(T _Nullable object) noexcept
 {
-	return CFRef{object, CXXCFRef::retain};
+	return CFRef{object, retain_ref};
 }
 
 // MARK: Creation and Destruction
@@ -160,13 +161,13 @@ inline CFRef<T>::CFRef(T _Nullable object CF_RELEASES_ARGUMENT) noexcept
 {}
 
 template <typename T>
-inline CFRef<T>::CFRef(T _Nullable object, retain_t) noexcept
+inline CFRef<T>::CFRef(T _Nullable object, retain_ref_t) noexcept
 : object_{object ? (T)CFRetain(object) : nullptr}
 {}
 
 template <typename T>
 inline CFRef<T>::CFRef(const CFRef& other) noexcept
-: CFRef{other.object_, CXXCFRef::retain}
+: CFRef{other.object_, retain_ref}
 {}
 
 template <typename T>
