@@ -15,14 +15,6 @@
 
 namespace CXXCFRef {
 
-/// Tag indicating that a Core Foundation object is unowned and that the constructor should retain it.
-struct retain_ref_t {
-	explicit retain_ref_t() noexcept = default;
-};
-
-/// The Core Foundation object is unowned and the constructor should retain it.
-inline constexpr retain_ref_t retain_ref;
-
 /// A simple RAII wrapper for Core Foundation objects.
 template <typename T>
 class CFRef final {
@@ -34,6 +26,14 @@ public:
 
 	/// The managed Core Foundation object type.
 	using element_type = T;
+
+	/// Tag indicating that a Core Foundation object is unowned and that the constructor should retain it.
+	struct retain_ref_t {
+		explicit retain_ref_t() noexcept = default;
+	};
+
+	/// The Core Foundation object is unowned and the constructor should retain it.
+	static constexpr retain_ref_t retain_ref{};
 
 	// MARK: Factory Methods
 
