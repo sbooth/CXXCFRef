@@ -9,6 +9,7 @@ import Testing
 @testable import CXXCFRef
 
 @Test func basic() async throws {
-	let s = CXXCFRef.CFString()
+	var s = CXXCFRef.CFString()
 	#expect(s.__convertToBool() == false)
+	s.reset()
 }
