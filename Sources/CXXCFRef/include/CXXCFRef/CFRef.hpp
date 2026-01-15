@@ -21,7 +21,7 @@ struct retain_ref_t {
 };
 
 /// The Core Foundation object is unowned and the constructor should retain it.
-constexpr retain_ref_t retain_ref;
+inline constexpr retain_ref_t retain_ref;
 
 /// A simple RAII wrapper for Core Foundation objects.
 template <typename T>
