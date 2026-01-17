@@ -177,7 +177,7 @@ inline CFRef<T>::CFRef(T _Nullable object CF_RELEASES_ARGUMENT) noexcept
 
 template <typename T>
 inline CFRef<T>::CFRef(T _Nullable object, retain_ref_t) noexcept
-: object_{object ? (T)CFRetain(object) : nullptr}
+: object_{object ? static_cast<T>(CFRetain(object)) : nullptr}
 {}
 
 template <typename T>
@@ -188,7 +188,7 @@ inline CFRef<T>::CFRef(const CFRef& other) noexcept
 template <typename T>
 inline CFRef<T>& CFRef<T>::operator=(const CFRef& other) noexcept
 {
-	reset(other.object_ ? (T)CFRetain(other.object_) : nullptr);
+	reset(other.object_ ? static_cast<T>(CFRetain(other.object_)) : nullptr);
 	return *this;
 }
 
