@@ -227,7 +227,7 @@ inline CFRef<T>::operator T() const noexcept
 template <typename T>
 inline bool CFRef<T>::isEqual(const CFRef& other) const noexcept
 {
-	return isEqual(other.object_);
+	return isEqual((CFTypeRef)other.object_);
 }
 
 template <typename T>
