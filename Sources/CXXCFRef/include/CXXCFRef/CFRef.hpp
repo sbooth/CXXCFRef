@@ -227,13 +227,13 @@ inline CFRef<T>::operator T() const noexcept
 template <typename T>
 inline bool CFRef<T>::isEqual(const CFRef& other) const noexcept
 {
-	return isEqual((CFTypeRef)other.object_);
+	return isEqual(static_cast<CFTypeRef>(other.object_));
 }
 
 template <typename T>
 inline bool CFRef<T>::isEqual(CFTypeRef _Nullable other) const noexcept
 {
-	return (!object_ && !other) || (object_ && other && CFEqual((CFTypeRef)object_, other));
+	return (!object_ && !other) || (object_ && other && CFEqual(static_cast<CFTypeRef>(object_), other));
 }
 
 template <typename T>
