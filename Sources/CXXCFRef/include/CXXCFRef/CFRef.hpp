@@ -102,14 +102,14 @@ public:
 
 	/// Returns true if the managed object is equal to the managed object from another CFRef.
 	///
-	/// Two null objects are considered equal; non-null objects are compared using CFEqual.
+	/// Null objects are considered equal; non-null objects are compared using CFEqual.
 	/// @param other A CFRef object.
 	/// @return true if the objects are equal, false otherwise.
 	[[nodiscard]] bool isEqual(const CFRef& other) const noexcept;
 
 	/// Returns true if the managed object is equal to a CFTypeRef.
 	///
-	/// Two null objects are considered equal; non-null objects are compared using CFEqual.
+	/// Null objects are considered equal; non-null objects are compared using CFEqual.
 	/// @param other A CFTypeRef.
 	/// @return true if the objects are equal, false otherwise.
 	[[nodiscard]] bool isEqual(CFTypeRef _Nullable other) const noexcept;
