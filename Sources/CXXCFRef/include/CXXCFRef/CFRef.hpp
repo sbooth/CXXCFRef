@@ -100,6 +100,20 @@ public:
 	/// Returns the managed object.
 	[[nodiscard]] operator T() const noexcept;
 
+	/// Returns true if the managed object is equal to the managed object from another CFRef.
+	///
+	/// Null objects are considered equal; non-null objects are compared using CFEqual.
+	/// @param other A CFRef object.
+	/// @return true if the objects are equal, false otherwise.
+	[[nodiscard]] bool isEqual(const CFRef& other) const noexcept;
+
+	/// Returns true if the managed object is equal to a CFTypeRef.
+	///
+	/// Null objects are considered equal; non-null objects are compared using CFEqual.
+	/// @param other A CFTypeRef.
+	/// @return true if the objects are equal, false otherwise.
+	[[nodiscard]] bool isEqual(CFTypeRef _Nullable other) const noexcept;
+
 	/// Returns the managed object.
 	/// @return A Core Foundation object or null.
 	[[nodiscard]] T _Nullable get() const & noexcept;
@@ -208,6 +222,18 @@ template <typename T>
 inline CFRef<T>::operator T() const noexcept
 {
 	return object_;
+}
+
+template <typename T>
+inline bool CFRef<T>::isEqual(const CFRef& other) const noexcept
+{
+	return isEqual(static_cast<CFTypeRef>(other.object_));
+}
+
+template <typename T>
+inline bool CFRef<T>::isEqual(CFTypeRef _Nullable other) const noexcept
+{
+	return (!object_ && !other) || (object_ && other && CFEqual(static_cast<CFTypeRef>(object_), other));
 }
 
 template <typename T>
