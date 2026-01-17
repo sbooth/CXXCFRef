@@ -233,7 +233,7 @@ inline bool CFRef<T>::isEqual(const CFRef& other) const noexcept
 template <typename T>
 inline bool CFRef<T>::isEqual(CFTypeRef _Nullable other) const noexcept
 {
-	return (!object_ && !other) || (object_ && other && CFEqual(object_, other));
+	return (!object_ && !other) || (object_ && other && CFEqual((CFTypeRef)object_, other));
 }
 
 template <typename T>
