@@ -8,7 +8,7 @@ AllowShortBlocksOnASingleLine:    Empty
 
 ConstructorInitializerIndentWidth: 2
 BreakConstructorInitializers: BeforeColon
-PackConstructorInitializers:  BinPack
+PackConstructorInitializers:  NextLine
 
 BreakTemplateDeclarations: true
 
