@@ -13,7 +13,7 @@
 
 #import <CoreFoundation/CoreFoundation.h>
 
-namespace CXXCFRef {
+namespace cxx_cf {
 
 /// Tag indicating that a Core Foundation object is unowned and that the constructor should retain it.
 struct retain_ref_t {
@@ -326,4 +326,4 @@ using CFXMLNode = CFRef<CFXMLNodeRef>;
 using CFXMLParser = CFRef<CFXMLParserRef>;
 using CFXMLTree = CFRef<CFXMLTreeRef>;
 
-} /* namespace CXXCFRef */
+} /* namespace cxx_cf */

@@ -25,7 +25,7 @@ let package = Package(
 		.target(
 			name: "CXXCFRef",
 			cSettings: [
-				.headerSearchPath("include/CXXCFRef"),
+				.headerSearchPath("include/cxx_cf"),
 			]
 		),
 		.testTarget(

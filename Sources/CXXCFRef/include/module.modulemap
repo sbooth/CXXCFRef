@@ -7,6 +7,6 @@
 
 module CXXCFRef {
 	requires cplusplus17
-	header "CXXCFRef/CFRef.hpp"
+	header "cxx_cf/CFRef.hpp"
 	export *
 }
