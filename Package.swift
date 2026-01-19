@@ -9,34 +9,34 @@
 import PackageDescription
 
 let package = Package(
-	name: "CXXCFRef",
-	products: [
-		// Products define the executables and libraries a package produces, making them visible to other packages.
-		.library(
-			name: "CXXCFRef",
-			targets: [
-				"CXXCFRef",
-			]
-		),
-	],
-	targets: [
-		// Targets are the basic building blocks of a package, defining a module or a test suite.
-		// Targets can depend on other targets in this package and products from dependencies.
-		.target(
-			name: "CXXCFRef",
-			cSettings: [
-				.headerSearchPath("include/cxx_cf"),
-			]
-		),
-		.testTarget(
-			name: "CXXCFRefTests",
-			dependencies: [
-				"CXXCFRef",
-			],
-			swiftSettings: [
-				.interoperabilityMode(.Cxx),
-			]
-		),
-	],
-	cxxLanguageStandard: .cxx17
+    name: "CXXCFRef",
+    products: [
+        // Products define the executables and libraries a package produces, making them visible to other packages.
+        .library(
+            name: "CXXCFRef",
+            targets: [
+                "CXXCFRef",
+            ]
+        ),
+    ],
+    targets: [
+        // Targets are the basic building blocks of a package, defining a module or a test suite.
+        // Targets can depend on other targets in this package and products from dependencies.
+        .target(
+            name: "CXXCFRef",
+            cSettings: [
+                .headerSearchPath("include/cxx_cf"),
+            ]
+        ),
+        .testTarget(
+            name: "CXXCFRefTests",
+            dependencies: [
+                "CXXCFRef",
+            ],
+            swiftSettings: [
+                .interoperabilityMode(.Cxx),
+            ]
+        ),
+    ],
+    cxxLanguageStandard: .cxx17
 )
