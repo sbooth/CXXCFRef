@@ -168,14 +168,16 @@ template <typename T>
 inline CFRef<T>::CFRef(std::nullptr_t) noexcept {}
 
 template <typename T>
-inline CFRef<T>::CFRef(T _Nullable object CF_RELEASES_ARGUMENT) noexcept : object_{object} {}
+inline CFRef<T>::CFRef(T _Nullable object CF_RELEASES_ARGUMENT) noexcept
+  : object_{object} {}
 
 template <typename T>
 inline CFRef<T>::CFRef(T _Nullable object, retain_ref_t) noexcept
   : object_{object ? static_cast<T>(CFRetain(object)) : nullptr} {}
 
 template <typename T>
-inline CFRef<T>::CFRef(const CFRef& other) noexcept : CFRef(other.object_, retain_ref) {}
+inline CFRef<T>::CFRef(const CFRef& other) noexcept
+  : CFRef(other.object_, retain_ref) {}
 
 template <typename T>
 inline CFRef<T>& CFRef<T>::operator=(const CFRef& other) noexcept {
@@ -184,7 +186,8 @@ inline CFRef<T>& CFRef<T>::operator=(const CFRef& other) noexcept {
 }
 
 template <typename T>
-inline CFRef<T>::CFRef(CFRef&& other) noexcept : object_{other.release()} {}
+inline CFRef<T>::CFRef(CFRef&& other) noexcept
+  : object_{other.release()} {}
 
 template <typename T>
 inline CFRef<T>& CFRef<T>::operator=(CFRef&& other) noexcept {
