@@ -73,21 +73,21 @@ class CFRef final {
 
     /// Constructs a copy of an existing CFRef.
     /// @param other A CFRef object.
-    CFRef(const CFRef &other) noexcept;
+    CFRef(const CFRef& other) noexcept;
 
     /// Replaces the managed object with the managed object from another CFRef.
     /// @param other A CFRef object.
     /// @return A reference to this.
-    CFRef &operator=(const CFRef &other) noexcept;
+    CFRef& operator=(const CFRef& other) noexcept;
 
     /// Constructs a CFRef by moving an existing CFRef.
     /// @param other A CFRef object.
-    CFRef(CFRef &&other) noexcept;
+    CFRef(CFRef&& other) noexcept;
 
     /// Replaces the managed object with the managed object from another CFRef.
     /// @param other A CFRef object.
     /// @return A reference to this.
-    CFRef &operator=(CFRef &&other) noexcept;
+    CFRef& operator=(CFRef&& other) noexcept;
 
     /// Destroys the CFRef and releases the managed object.
     ~CFRef() noexcept;
@@ -105,7 +105,7 @@ class CFRef final {
     /// Null objects are considered equal; non-null objects are compared using CFEqual.
     /// @param other A CFRef object.
     /// @return true if the objects are equal, false otherwise.
-    [[nodiscard]] bool isEqual(const CFRef &other) const noexcept;
+    [[nodiscard]] bool isEqual(const CFRef& other) const noexcept;
 
     /// Returns true if the managed object is equal to a CFTypeRef.
     ///
@@ -116,7 +116,7 @@ class CFRef final {
 
     /// Returns the managed object.
     /// @return A Core Foundation object or null.
-    [[nodiscard]] T _Nullable get() const & noexcept;
+    [[nodiscard]] T _Nullable get() const& noexcept;
 
     /// Resets the managed object and returns a pointer to the internal storage.
     ///
@@ -132,7 +132,7 @@ class CFRef final {
 
     /// Swaps the managed object with the managed object from another CFRef.
     /// @param other A CFRef object.
-    void swap(CFRef &other) noexcept;
+    void swap(CFRef& other) noexcept;
 
     /// Releases ownership of the managed object and returns it.
     ///
@@ -140,7 +140,7 @@ class CFRef final {
     /// @return A Core Foundation object or null.
     [[nodiscard]] T _Nullable release() noexcept CF_RETURNS_RETAINED;
 
-    T _Nullable get() const && = delete;
+    T _Nullable get() const&& = delete;
     T _Nullable *_Nonnull put() && = delete;
 
   private:
@@ -175,19 +175,19 @@ inline CFRef<T>::CFRef(T _Nullable object, retain_ref_t) noexcept
   : object_{object ? static_cast<T>(CFRetain(object)) : nullptr} {}
 
 template <typename T>
-inline CFRef<T>::CFRef(const CFRef &other) noexcept : CFRef(other.object_, retain_ref) {}
+inline CFRef<T>::CFRef(const CFRef& other) noexcept : CFRef(other.object_, retain_ref) {}
 
 template <typename T>
-inline CFRef<T> &CFRef<T>::operator=(const CFRef &other) noexcept {
+inline CFRef<T>& CFRef<T>::operator=(const CFRef& other) noexcept {
     reset(other.object_ ? static_cast<T>(CFRetain(other.object_)) : nullptr);
     return *this;
 }
 
 template <typename T>
-inline CFRef<T>::CFRef(CFRef &&other) noexcept : object_{other.release()} {}
+inline CFRef<T>::CFRef(CFRef&& other) noexcept : object_{other.release()} {}
 
 template <typename T>
-inline CFRef<T> &CFRef<T>::operator=(CFRef &&other) noexcept {
+inline CFRef<T>& CFRef<T>::operator=(CFRef&& other) noexcept {
     reset(other.release());
     return *this;
 }
@@ -210,7 +210,7 @@ inline CFRef<T>::operator T() const noexcept {
 }
 
 template <typename T>
-inline bool CFRef<T>::isEqual(const CFRef &other) const noexcept {
+inline bool CFRef<T>::isEqual(const CFRef& other) const noexcept {
     return isEqual(static_cast<CFTypeRef>(other.object_));
 }
 
@@ -220,7 +220,7 @@ inline bool CFRef<T>::isEqual(CFTypeRef _Nullable other) const noexcept {
 }
 
 template <typename T>
-inline T _Nullable CFRef<T>::get() const & noexcept {
+inline T _Nullable CFRef<T>::get() const& noexcept {
     return object_;
 }
 
@@ -237,7 +237,7 @@ inline void CFRef<T>::reset(T _Nullable object CF_RELEASES_ARGUMENT) noexcept {
 }
 
 template <typename T>
-inline void CFRef<T>::swap(CFRef &other) noexcept {
+inline void CFRef<T>::swap(CFRef& other) noexcept {
     std::swap(object_, other.object_);
 }
 
