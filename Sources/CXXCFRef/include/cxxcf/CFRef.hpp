@@ -42,14 +42,14 @@ class CFRef final {
     /// The CFRef assumes responsibility for releasing the passed object using CFRelease.
     /// @param object A Core Foundation object or null.
     /// @return A CFRef object.
-    static CFRef adopt(T _Nullable object CF_RELEASES_ARGUMENT) noexcept;
+    static auto adopt(T _Nullable object [[clang::cf_consumed]]) noexcept -> CFRef;
 
     /// Constructs and returns a CFRef for an unowned object.
     ///
     /// The CFRef retains the passed object using CFRetain and assumes responsibility for releasing it using CFRelease.
     /// @param object A Core Foundation object or null.
     /// @return A CFRef object.
-    static CFRef retain(T _Nullable object) noexcept;
+    static auto retain(T _Nullable object) noexcept -> CFRef;
 
     // MARK: Creation and Destruction
 
@@ -63,13 +63,13 @@ class CFRef final {
     ///
     /// The CFRef assumes responsibility for releasing the passed object using CFRelease.
     /// @param object A Core Foundation object or null.
-    explicit CFRef(T _Nullable object CF_RELEASES_ARGUMENT) noexcept;
+    explicit CFRef(T _Nullable object [[clang::cf_consumed]]) noexcept;
 
     /// Constructs a CFRef with an unowned object.
     ///
     /// The CFRef retains the passed object using CFRetain and assumes responsibility for releasing it using CFRelease.
     /// @param object A Core Foundation object or null.
-    CFRef(T _Nullable object, retain_ref_t) noexcept;
+    CFRef(T _Nullable object, retain_ref_t /*unused*/) noexcept;
 
     /// Constructs a copy of an existing CFRef.
     /// @param other A CFRef object.
@@ -78,7 +78,7 @@ class CFRef final {
     /// Replaces the managed object with the managed object from another CFRef.
     /// @param other A CFRef object.
     /// @return A reference to this.
-    CFRef& operator=(const CFRef& other) noexcept;
+    auto operator=(const CFRef& other) noexcept -> CFRef&;
 
     /// Constructs a CFRef by moving an existing CFRef.
     /// @param other A CFRef object.
@@ -87,7 +87,7 @@ class CFRef final {
     /// Replaces the managed object with the managed object from another CFRef.
     /// @param other A CFRef object.
     /// @return A reference to this.
-    CFRef& operator=(CFRef&& other) noexcept;
+    auto operator=(CFRef&& other) noexcept -> CFRef&;
 
     /// Destroys the CFRef and releases the managed object.
     ~CFRef() noexcept;
@@ -105,30 +105,30 @@ class CFRef final {
     /// Null objects are considered equal; non-null objects are compared using CFEqual.
     /// @param other A CFRef object.
     /// @return true if the objects are equal, false otherwise.
-    [[nodiscard]] bool isEqual(const CFRef& other) const noexcept;
+    [[nodiscard]] auto isEqual(const CFRef& other) const noexcept -> bool;
 
     /// Returns true if the managed object is equal to a CFTypeRef.
     ///
     /// Null objects are considered equal; non-null objects are compared using CFEqual.
     /// @param other A CFTypeRef.
     /// @return true if the objects are equal, false otherwise.
-    [[nodiscard]] bool isEqual(CFTypeRef _Nullable other) const noexcept;
+    [[nodiscard]] auto isEqual(CFTypeRef _Nullable other) const noexcept -> bool;
 
     /// Returns the managed object.
     /// @return A Core Foundation object or null.
-    [[nodiscard]] T _Nullable get() const& noexcept;
+    [[nodiscard]] auto get() const& noexcept -> T _Nullable;
 
     /// Resets the managed object and returns a pointer to the internal storage.
     ///
     /// The CFRef will assume responsibility for releasing any object written to its storage using CFRelease.
     /// @return A pointer to a null Core Foundation object.
-    [[nodiscard]] T _Nullable *_Nonnull put() & noexcept;
+    [[nodiscard]] auto put() & noexcept -> T _Nullable *_Nonnull;
 
     /// Replaces the managed object with another owned object.
     ///
     /// The CFRef assumes responsibility for releasing the passed object using CFRelease.
     /// @param object A Core Foundation object or null.
-    void reset(T _Nullable object CF_RELEASES_ARGUMENT = nullptr) noexcept;
+    void reset(T _Nullable object [[clang::cf_consumed]] = nullptr) noexcept;
 
     /// Swaps the managed object with the managed object from another CFRef.
     /// @param other A CFRef object.
@@ -138,10 +138,10 @@ class CFRef final {
     ///
     /// The caller assumes responsibility for releasing the returned object using CFRelease.
     /// @return A Core Foundation object or null.
-    [[nodiscard]] T _Nullable release() noexcept CF_RETURNS_RETAINED;
+    [[nodiscard, clang::cf_returns_retained]] auto release() noexcept -> T _Nullable;
 
-    T _Nullable get() const&& = delete;
-    T _Nullable *_Nonnull put() && = delete;
+    auto get() const&& -> T _Nullable = delete;
+    auto put() && -> T _Nullable *_Nonnull = delete;
 
   private:
     /// The managed Core Foundation object.
@@ -153,12 +153,12 @@ class CFRef final {
 // MARK: Factory Methods
 
 template <typename T>
-inline CFRef<T> CFRef<T>::adopt(T _Nullable object CF_RELEASES_ARGUMENT) noexcept {
+inline auto CFRef<T>::adopt(T _Nullable object) noexcept -> CFRef {
     return CFRef(object);
 }
 
 template <typename T>
-inline CFRef<T> CFRef<T>::retain(T _Nullable object) noexcept {
+inline auto CFRef<T>::retain(T _Nullable object) noexcept -> CFRef {
     return CFRef(object, retain_ref);
 }
 
@@ -168,11 +168,11 @@ template <typename T>
 inline CFRef<T>::CFRef(std::nullptr_t) noexcept {}
 
 template <typename T>
-inline CFRef<T>::CFRef(T _Nullable object CF_RELEASES_ARGUMENT) noexcept
+inline CFRef<T>::CFRef(T _Nullable object) noexcept
   : object_{object} {}
 
 template <typename T>
-inline CFRef<T>::CFRef(T _Nullable object, retain_ref_t) noexcept
+inline CFRef<T>::CFRef(T _Nullable object, retain_ref_t /*unused*/) noexcept
   : object_{object ? static_cast<T>(CFRetain(object)) : nullptr} {}
 
 template <typename T>
@@ -180,7 +180,7 @@ inline CFRef<T>::CFRef(const CFRef& other) noexcept
   : CFRef(other.object_, retain_ref) {}
 
 template <typename T>
-inline CFRef<T>& CFRef<T>::operator=(const CFRef& other) noexcept {
+inline auto CFRef<T>::operator=(const CFRef& other) noexcept -> CFRef& {
     reset(other.object_ ? static_cast<T>(CFRetain(other.object_)) : nullptr);
     return *this;
 }
@@ -190,7 +190,7 @@ inline CFRef<T>::CFRef(CFRef&& other) noexcept
   : object_{other.release()} {}
 
 template <typename T>
-inline CFRef<T>& CFRef<T>::operator=(CFRef&& other) noexcept {
+inline auto CFRef<T>::operator=(CFRef&& other) noexcept -> CFRef& {
     reset(other.release());
     return *this;
 }
@@ -213,30 +213,31 @@ inline CFRef<T>::operator T() const noexcept {
 }
 
 template <typename T>
-inline bool CFRef<T>::isEqual(const CFRef& other) const noexcept {
+inline auto CFRef<T>::isEqual(const CFRef& other) const noexcept -> bool {
     return isEqual(static_cast<CFTypeRef>(other.object_));
 }
 
 template <typename T>
-inline bool CFRef<T>::isEqual(CFTypeRef _Nullable other) const noexcept {
-    return (!object_ && !other) || (object_ && other && CFEqual(static_cast<CFTypeRef>(object_), other));
+inline auto CFRef<T>::isEqual(CFTypeRef _Nullable other) const noexcept -> bool {
+    return (!object_ && (other == nullptr)) || (object_ && other && CFEqual(static_cast<CFTypeRef>(object_), other));
 }
 
 template <typename T>
-inline T _Nullable CFRef<T>::get() const& noexcept {
+inline auto CFRef<T>::get() const& noexcept -> T _Nullable {
     return object_;
 }
 
 template <typename T>
-inline T _Nullable *_Nonnull CFRef<T>::put() & noexcept {
+inline auto CFRef<T>::put() & noexcept -> T _Nullable *_Nonnull {
     reset();
     return &object_;
 }
 
 template <typename T>
-inline void CFRef<T>::reset(T _Nullable object CF_RELEASES_ARGUMENT) noexcept {
-    if (auto old = std::exchange(object_, object); old)
+inline void CFRef<T>::reset(T _Nullable object) noexcept {
+    if (auto old = std::exchange(object_, object); old) {
         CFRelease(old);
+    }
 }
 
 template <typename T>
@@ -245,7 +246,7 @@ inline void CFRef<T>::swap(CFRef& other) noexcept {
 }
 
 template <typename T>
-inline T _Nullable CFRef<T>::release() noexcept CF_RETURNS_RETAINED {
+inline auto CFRef<T>::release() noexcept -> T _Nullable {
     return std::exchange(object_, nullptr);
 }
 
