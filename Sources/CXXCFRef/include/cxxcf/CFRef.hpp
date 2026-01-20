@@ -98,7 +98,7 @@ class CFRef final {
     [[nodiscard]] explicit operator bool() const noexcept;
 
     /// Returns the managed object.
-    [[nodiscard]] operator T() const noexcept;
+    [[nodiscard, clang::cf_returns_not_retained]] operator T() const noexcept;
 
     /// Returns true if the managed object is equal to the managed object from another CFRef.
     ///
@@ -116,7 +116,7 @@ class CFRef final {
 
     /// Returns the managed object.
     /// @return A Core Foundation object or null.
-    [[nodiscard]] auto get() const& noexcept -> T _Nullable;
+    [[nodiscard, clang::cf_returns_not_retained]] auto get() const& noexcept -> T _Nullable;
 
     /// Resets the managed object and returns a pointer to the internal storage.
     ///
