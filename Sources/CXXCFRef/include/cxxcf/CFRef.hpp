@@ -134,11 +134,11 @@ class CFRef final {
     /// @param other A CFRef object.
     void swap(CFRef& other) noexcept;
 
-    /// Releases ownership of the managed object and returns it.
+    /// Relinquishes ownership of the managed object and returns it.
     ///
     /// The caller assumes responsibility for releasing the returned object using CFRelease.
     /// @return A Core Foundation object or null.
-    [[nodiscard, clang::cf_returns_retained]] auto release() noexcept -> T _Nullable;
+    [[nodiscard, clang::cf_returns_retained]] auto leak() noexcept -> T _Nullable;
 
     auto get() const&& -> T _Nullable = delete;
     auto put() && -> T _Nullable *_Nonnull = delete;
@@ -187,11 +187,11 @@ inline auto CFRef<T>::operator=(const CFRef& other) noexcept -> CFRef& {
 
 template <typename T>
 inline CFRef<T>::CFRef(CFRef&& other) noexcept
-  : object_{other.release()} {}
+  : object_{other.leak()} {}
 
 template <typename T>
 inline auto CFRef<T>::operator=(CFRef&& other) noexcept -> CFRef& {
-    reset(other.release());
+    reset(other.leak());
     return *this;
 }
 
@@ -246,7 +246,7 @@ inline void CFRef<T>::swap(CFRef& other) noexcept {
 }
 
 template <typename T>
-inline auto CFRef<T>::release() noexcept -> T _Nullable {
+inline auto CFRef<T>::leak() noexcept -> T _Nullable {
     return std::exchange(object_, nullptr);
 }
 
