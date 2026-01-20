@@ -134,7 +134,7 @@ class CFRef final {
     /// @param other A CFRef object.
     void swap(CFRef& other) noexcept;
 
-    /// Releases ownership of the managed object and returns it.
+    /// Relinquishes ownership of the managed object and returns it.
     ///
     /// The caller assumes responsibility for releasing the returned object using CFRelease.
     /// @return A Core Foundation object or null.
