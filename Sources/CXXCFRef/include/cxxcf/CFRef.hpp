@@ -219,7 +219,8 @@ inline auto CFRef<T>::isEqual(const CFRef& other) const noexcept -> bool {
 
 template <typename T>
 inline auto CFRef<T>::isEqual(CFTypeRef _Nullable other) const noexcept -> bool {
-    return (!object_ && (other == nullptr)) || (object_ && other && CFEqual(static_cast<CFTypeRef>(object_), other));
+    return (!object_ && (other == nullptr)) ||
+           (object_ && (other != nullptr) && CFEqual(static_cast<CFTypeRef>(object_), other));
 }
 
 template <typename T>
