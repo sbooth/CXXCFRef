@@ -13,17 +13,17 @@
 #import <type_traits>
 #import <utility>
 
-namespace cxxcf {
+namespace cf {
 
 /// Tag indicating that a Core Foundation object is unowned and that the constructor should retain it.
-struct retain_ref_t {
-    explicit retain_ref_t() noexcept = default;
+struct retain_t {
+    explicit retain_t() noexcept = default;
 };
 
 /// The Core Foundation object is unowned and the constructor should retain it.
-inline constexpr retain_ref_t retain_ref{};
+inline constexpr retain_t retain{};
 
-/// A simple RAII wrapper for Core Foundation objects.
+/// An RAII wrapper providing shared ownership semantics for Core Foundation reference-counted types.
 template <typename T>
 class CFRef final {
   public:
@@ -69,7 +69,7 @@ class CFRef final {
     ///
     /// The CFRef retains the passed object using CFRetain and assumes responsibility for releasing it using CFRelease.
     /// @param object A Core Foundation object or null.
-    CFRef(T _Nullable object, retain_ref_t /*unused*/) noexcept;
+    CFRef(T _Nullable object, retain_t /*unused*/) noexcept;
 
     /// Constructs a copy of an existing CFRef.
     /// @param other A CFRef object.
@@ -159,7 +159,7 @@ inline auto CFRef<T>::adopt(T _Nullable object) noexcept -> CFRef {
 
 template <typename T>
 inline auto CFRef<T>::retain(T _Nullable object) noexcept -> CFRef {
-    return CFRef(object, retain_ref);
+    return CFRef(object, cf::retain);
 }
 
 // MARK: Creation and Destruction
@@ -172,12 +172,12 @@ inline CFRef<T>::CFRef(T _Nullable object) noexcept
   : object_{object} {}
 
 template <typename T>
-inline CFRef<T>::CFRef(T _Nullable object, retain_ref_t /*unused*/) noexcept
+inline CFRef<T>::CFRef(T _Nullable object, retain_t /*unused*/) noexcept
   : object_{object ? static_cast<T>(CFRetain(object)) : nullptr} {}
 
 template <typename T>
 inline CFRef<T>::CFRef(const CFRef& other) noexcept
-  : CFRef(other.object_, retain_ref) {}
+  : CFRef(other.object_, cf::retain) {}
 
 template <typename T>
 inline auto CFRef<T>::operator=(const CFRef& other) noexcept -> CFRef& {
@@ -309,4 +309,4 @@ using CFXMLNode = CFRef<CFXMLNodeRef>;
 using CFXMLParser = CFRef<CFXMLParserRef>;
 using CFXMLTree = CFRef<CFXMLTreeRef>;
 
-} /* namespace cxxcf */
+} /* namespace cf */
