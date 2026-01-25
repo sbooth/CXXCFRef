@@ -51,7 +51,7 @@ class CFRef final {
     /// @return A CFRef object.
     static CFRef retain(T _Nullable object) noexcept;
 
-    // MARK: Creation and Destruction
+    // MARK: Construction and Destruction
 
     /// Constructs an empty CFRef with a null managed object.
     CFRef() noexcept = default;
@@ -162,7 +162,7 @@ inline auto CFRef<T>::retain(T _Nullable object) noexcept -> CFRef {
     return CFRef(object, cf::retain);
 }
 
-// MARK: Creation and Destruction
+// MARK: Construction and Destruction
 
 template <typename T>
 inline CFRef<T>::CFRef(std::nullptr_t) noexcept {}
