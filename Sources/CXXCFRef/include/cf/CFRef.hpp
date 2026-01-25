@@ -18,9 +18,14 @@
 #pragma clang diagnostic ignored "-Wnullability-extension"
 #endif
 
+#ifdef __has_feature
 #if __has_feature(nullability)
 #define NULLABLE _Nullable
 #define NONNULL _Nonnull
+#else
+#define NULLABLE
+#define NONNULL
+#endif
 #else
 #define NULLABLE
 #define NONNULL
@@ -41,8 +46,10 @@ template <typename T>
 class CFRef final {
   public:
     static_assert(std::is_pointer_v<T>, "CFRef only supports Core Foundation opaque objects");
+#ifdef __has_feature
 #if __has_feature(objc_arc)
     static_assert(!std::is_convertible_v<T, id>, "Use ARC for Objective-C types");
+#endif
 #endif
 
     /// The managed Core Foundation object type.
