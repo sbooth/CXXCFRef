@@ -18,12 +18,16 @@
 #pragma clang diagnostic ignored "-Wnullability-extension"
 #endif
 
+#ifndef __has_feature
+#define __has_feature(x) 0
+#endif
+
 #if __has_feature(nullability)
-#define NULLABLE _Nullable
-#define NONNULL _Nonnull
+#define CFREF_NULLABLE _Nullable
+#define CFREF_NONNULL _Nonnull
 #else
-#define NULLABLE
-#define NONNULL
+#define CFREF_NULLABLE
+#define CFREF_NONNULL
 #endif
 
 namespace cf {
@@ -55,14 +59,14 @@ class CFRef final {
     /// The CFRef assumes responsibility for releasing the passed object using CFRelease.
     /// @param object A Core Foundation object or null.
     /// @return A CFRef object.
-    static CFRef adopt(T NULLABLE object [[clang::cf_consumed]]) noexcept;
+    static CFRef adopt(T CFREF_NULLABLE object [[clang::cf_consumed]]) noexcept;
 
     /// Constructs and returns a CFRef for an unowned object.
     ///
     /// The CFRef retains the passed object using CFRetain and assumes responsibility for releasing it using CFRelease.
     /// @param object A Core Foundation object or null.
     /// @return A CFRef object.
-    static CFRef retain(T NULLABLE object) noexcept;
+    static CFRef retain(T CFREF_NULLABLE object) noexcept;
 
     // MARK: Creation and Destruction
 
@@ -76,13 +80,13 @@ class CFRef final {
     ///
     /// The CFRef assumes responsibility for releasing the passed object using CFRelease.
     /// @param object A Core Foundation object or null.
-    explicit CFRef(T NULLABLE object [[clang::cf_consumed]]) noexcept;
+    explicit CFRef(T CFREF_NULLABLE object [[clang::cf_consumed]]) noexcept;
 
     /// Constructs a CFRef with an unowned object.
     ///
     /// The CFRef retains the passed object using CFRetain and assumes responsibility for releasing it using CFRelease.
     /// @param object A Core Foundation object or null.
-    CFRef(T NULLABLE object, retain_t /*unused*/) noexcept;
+    CFRef(T CFREF_NULLABLE object, retain_t /*unused*/) noexcept;
 
     /// Constructs a copy of an existing CFRef.
     /// @param other A CFRef object.
@@ -125,23 +129,23 @@ class CFRef final {
     /// Null objects are considered equal; non-null objects are compared using CFEqual.
     /// @param other A Core Foundation object or null.
     /// @return true if the objects are equal, false otherwise.
-    [[nodiscard]] bool isEqual(CFTypeRef NULLABLE other) const noexcept;
+    [[nodiscard]] bool isEqual(CFTypeRef CFREF_NULLABLE other) const noexcept;
 
     /// Returns the managed object.
     /// @return A Core Foundation object or null.
-    [[nodiscard, clang::cf_returns_not_retained]] T NULLABLE get() const& noexcept;
+    [[nodiscard, clang::cf_returns_not_retained]] T CFREF_NULLABLE get() const& noexcept;
 
     /// Resets the managed object and returns a pointer to the internal storage.
     ///
     /// The CFRef will assume responsibility for releasing any object written to its storage using CFRelease.
     /// @return A pointer to a null Core Foundation object.
-    [[nodiscard]] T NULLABLE *NONNULL put() & noexcept;
+    [[nodiscard]] T CFREF_NULLABLE *CFREF_NONNULL put() & noexcept;
 
     /// Replaces the managed object with another owned object.
     ///
     /// The CFRef assumes responsibility for releasing the passed object using CFRelease.
     /// @param object A Core Foundation object or null.
-    void reset(T NULLABLE object [[clang::cf_consumed]] = nullptr) noexcept;
+    void reset(T CFREF_NULLABLE object [[clang::cf_consumed]] = nullptr) noexcept;
 
     /// Swaps the managed object with the managed object from another CFRef.
     /// @param other A CFRef object.
@@ -151,10 +155,10 @@ class CFRef final {
     ///
     /// The caller assumes responsibility for releasing the returned object using CFRelease.
     /// @return A Core Foundation object or null.
-    [[nodiscard, clang::cf_returns_retained]] T NULLABLE leak() noexcept;
+    [[nodiscard, clang::cf_returns_retained]] T CFREF_NULLABLE leak() noexcept;
 
-    T NULLABLE get() const&& = delete;
-    T NULLABLE *NONNULL put() && = delete;
+    T CFREF_NULLABLE get() const&& = delete;
+    T CFREF_NULLABLE *CFREF_NONNULL put() && = delete;
 
   private:
     /// The managed Core Foundation object.
@@ -166,12 +170,12 @@ class CFRef final {
 // MARK: Factory Methods
 
 template <typename T>
-inline auto CFRef<T>::adopt(T NULLABLE object) noexcept -> CFRef {
+inline auto CFRef<T>::adopt(T CFREF_NULLABLE object) noexcept -> CFRef {
     return CFRef(object);
 }
 
 template <typename T>
-inline auto CFRef<T>::retain(T NULLABLE object) noexcept -> CFRef {
+inline auto CFRef<T>::retain(T CFREF_NULLABLE object) noexcept -> CFRef {
     return CFRef(object, cf::retain);
 }
 
@@ -181,11 +185,11 @@ template <typename T>
 inline CFRef<T>::CFRef(std::nullptr_t) noexcept {}
 
 template <typename T>
-inline CFRef<T>::CFRef(T NULLABLE object) noexcept
+inline CFRef<T>::CFRef(T CFREF_NULLABLE object) noexcept
   : object_{object} {}
 
 template <typename T>
-inline CFRef<T>::CFRef(T NULLABLE object, retain_t /*unused*/) noexcept
+inline CFRef<T>::CFRef(T CFREF_NULLABLE object, retain_t /*unused*/) noexcept
   : object_{object ? static_cast<T>(CFRetain(object)) : nullptr} {}
 
 template <typename T>
@@ -231,24 +235,24 @@ inline bool CFRef<T>::isEqual(const CFRef& other) const noexcept {
 }
 
 template <typename T>
-inline bool CFRef<T>::isEqual(CFTypeRef NULLABLE other) const noexcept {
+inline bool CFRef<T>::isEqual(CFTypeRef CFREF_NULLABLE other) const noexcept {
     return (!object_ && (other == nullptr)) ||
            (object_ && (other != nullptr) && CFEqual(static_cast<CFTypeRef>(object_), other));
 }
 
 template <typename T>
-inline T NULLABLE CFRef<T>::get() const& noexcept {
+inline T CFREF_NULLABLE CFRef<T>::get() const& noexcept {
     return object_;
 }
 
 template <typename T>
-inline T NULLABLE *NONNULL CFRef<T>::put() & noexcept {
+inline T CFREF_NULLABLE *CFREF_NONNULL CFRef<T>::put() & noexcept {
     reset();
     return &object_;
 }
 
 template <typename T>
-inline void CFRef<T>::reset(T NULLABLE object) noexcept {
+inline void CFRef<T>::reset(T CFREF_NULLABLE object) noexcept {
     if (auto old = std::exchange(object_, object); old) {
         CFRelease(old);
     }
@@ -260,7 +264,7 @@ inline void CFRef<T>::swap(CFRef& other) noexcept {
 }
 
 template <typename T>
-inline T NULLABLE CFRef<T>::leak() noexcept {
+inline T CFREF_NULLABLE CFRef<T>::leak() noexcept {
     return std::exchange(object_, nullptr);
 }
 
@@ -323,6 +327,9 @@ using CFXMLParser = CFRef<CFXMLParserRef>;
 using CFXMLTree = CFRef<CFXMLTreeRef>;
 
 } /* namespace cf */
+
+#undef CFREF_NULLABLE
+#undef CFREF_NONNULL
 
 #if defined(__clang__)
 #pragma clang diagnostic pop
