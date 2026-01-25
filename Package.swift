@@ -20,10 +20,7 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "CXXCFRef",
-            cxxSettings: [
-                .headerSearchPath("include/cf"),
-            ]
+            name: "CXXCFRef"
         ),
         .testTarget(
             name: "CXXCFRefTests",
