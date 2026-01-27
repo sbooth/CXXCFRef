@@ -24,8 +24,7 @@ struct retain_t {
 inline constexpr retain_t retain{};
 
 /// An RAII wrapper providing shared ownership semantics for Core Foundation reference-counted types.
-template <typename T>
-class CFRef final {
+template <typename T> class CFRef final {
   public:
     static_assert(std::is_pointer_v<T>, "CFRef only supports Core Foundation opaque objects");
 #if __has_feature(objc_arc)
@@ -73,21 +72,21 @@ class CFRef final {
 
     /// Constructs a copy of an existing CFRef.
     /// @param other A CFRef object.
-    CFRef(const CFRef& other) noexcept;
+    CFRef(const CFRef &other) noexcept;
 
     /// Replaces the managed object with the managed object from another CFRef.
     /// @param other A CFRef object.
     /// @return A reference to this.
-    CFRef& operator=(const CFRef& other) noexcept;
+    CFRef &operator=(const CFRef &other) noexcept;
 
     /// Constructs a CFRef by moving an existing CFRef.
     /// @param other A CFRef object.
-    CFRef(CFRef&& other) noexcept;
+    CFRef(CFRef &&other) noexcept;
 
     /// Replaces the managed object with the managed object from another CFRef.
     /// @param other A CFRef object.
     /// @return A reference to this.
-    CFRef& operator=(CFRef&& other) noexcept;
+    CFRef &operator=(CFRef &&other) noexcept;
 
     /// Destroys the CFRef and releases the managed object.
     ~CFRef() noexcept;
@@ -105,7 +104,7 @@ class CFRef final {
     /// Null objects are considered equal; non-null objects are compared using CFEqual.
     /// @param other A CFRef object.
     /// @return true if the objects are equal, false otherwise.
-    [[nodiscard]] bool isEqual(const CFRef& other) const noexcept;
+    [[nodiscard]] bool isEqual(const CFRef &other) const noexcept;
 
     /// Returns true if the managed object is equal to a CFTypeRef.
     ///
@@ -116,7 +115,7 @@ class CFRef final {
 
     /// Returns the managed object.
     /// @return A Core Foundation object or null.
-    [[nodiscard, clang::cf_returns_not_retained]] T _Nullable get() const& noexcept;
+    [[nodiscard, clang::cf_returns_not_retained]] T _Nullable get() const & noexcept;
 
     /// Resets the managed object and returns a pointer to the internal storage.
     ///
@@ -132,7 +131,7 @@ class CFRef final {
 
     /// Swaps the managed object with the managed object from another CFRef.
     /// @param other A CFRef object.
-    void swap(CFRef& other) noexcept;
+    void swap(CFRef &other) noexcept;
 
     /// Relinquishes ownership of the managed object and returns it.
     ///
@@ -140,7 +139,7 @@ class CFRef final {
     /// @return A Core Foundation object or null.
     [[nodiscard, clang::cf_returns_retained]] T _Nullable leak() noexcept;
 
-    T _Nullable get() const&& = delete;
+    T _Nullable get() const && = delete;
     T _Nullable *_Nonnull put() && = delete;
 
   private:
@@ -152,104 +151,73 @@ class CFRef final {
 
 // MARK: Factory Methods
 
-template <typename T>
-inline auto CFRef<T>::adopt(T _Nullable object) noexcept -> CFRef {
-    return CFRef(object);
-}
+template <typename T> inline auto CFRef<T>::adopt(T _Nullable object) noexcept -> CFRef { return CFRef(object); }
 
-template <typename T>
-inline auto CFRef<T>::retain(T _Nullable object) noexcept -> CFRef {
+template <typename T> inline auto CFRef<T>::retain(T _Nullable object) noexcept -> CFRef {
     return CFRef(object, cf::retain);
 }
 
 // MARK: Construction and Destruction
 
-template <typename T>
-inline CFRef<T>::CFRef(std::nullptr_t) noexcept {}
+template <typename T> inline CFRef<T>::CFRef(std::nullptr_t) noexcept {}
 
-template <typename T>
-inline CFRef<T>::CFRef(T _Nullable object) noexcept
-  : object_{object} {}
+template <typename T> inline CFRef<T>::CFRef(T _Nullable object) noexcept : object_{object} {}
 
 template <typename T>
 inline CFRef<T>::CFRef(T _Nullable object, retain_t /*unused*/) noexcept
-  : object_{object ? static_cast<T>(CFRetain(object)) : nullptr} {}
+    : object_{object ? static_cast<T>(CFRetain(object)) : nullptr} {
+    int a;
+    int b;
+    (void)malloc(100);
+}
 
-template <typename T>
-inline CFRef<T>::CFRef(const CFRef& other) noexcept
-  : CFRef(other.object_, cf::retain) {}
+template <typename T> inline CFRef<T>::CFRef(const CFRef &other) noexcept : CFRef(other.object_, cf::retain) {}
 
-template <typename T>
-inline auto CFRef<T>::operator=(const CFRef& other) noexcept -> CFRef& {
+template <typename T> inline auto CFRef<T>::operator=(const CFRef &other) noexcept -> CFRef & {
     reset(other.object_ ? static_cast<T>(CFRetain(other.object_)) : nullptr);
     return *this;
 }
 
-template <typename T>
-inline CFRef<T>::CFRef(CFRef&& other) noexcept
-  : object_{other.leak()} {}
+template <typename T> inline CFRef<T>::CFRef(CFRef &&other) noexcept : object_{other.leak()} {}
 
-template <typename T>
-inline auto CFRef<T>::operator=(CFRef&& other) noexcept -> CFRef& {
+template <typename T> inline auto CFRef<T>::operator=(CFRef &&other) noexcept -> CFRef & {
     reset(other.leak());
     return *this;
 }
 
-template <typename T>
-inline CFRef<T>::~CFRef() noexcept {
-    reset();
-}
+template <typename T> inline CFRef<T>::~CFRef() noexcept { reset(); }
 
 // MARK: Core Foundation Object Management
 
-template <typename T>
-inline CFRef<T>::operator bool() const noexcept {
-    return object_ != nullptr;
-}
+template <typename T> inline CFRef<T>::operator bool() const noexcept { return object_ != nullptr; }
 
-template <typename T>
-inline CFRef<T>::operator T() const noexcept {
-    return object_;
-}
+template <typename T> inline CFRef<T>::operator T() const noexcept { return object_; }
 
-template <typename T>
-inline bool CFRef<T>::isEqual(const CFRef& other) const noexcept {
+template <typename T> inline bool CFRef<T>::isEqual(const CFRef &other) const noexcept {
     return isEqual(static_cast<CFTypeRef>(other.object_));
 }
 
-template <typename T>
-inline bool CFRef<T>::isEqual(CFTypeRef _Nullable other) const noexcept {
+template <typename T> inline bool CFRef<T>::isEqual(CFTypeRef _Nullable other) const noexcept {
     return (!object_ && (other == nullptr)) ||
            (object_ && (other != nullptr) && CFEqual(static_cast<CFTypeRef>(object_), other));
 }
 
-template <typename T>
-inline T _Nullable CFRef<T>::get() const& noexcept {
-    return object_;
-}
+template <typename T> inline T _Nullable CFRef<T>::get() const & noexcept { return object_; }
 
-template <typename T>
-inline T _Nullable *_Nonnull CFRef<T>::put() & noexcept {
+template <typename T> inline T _Nullable *_Nonnull CFRef<T>::put() & noexcept {
     reset();
     return &object_;
 }
 
-template <typename T>
-inline void CFRef<T>::reset(T _Nullable object) noexcept {
+template <typename T> inline void CFRef<T>::reset(T _Nullable object) noexcept {
     if (auto old = std::exchange(object_, object); old) {
         CFRelease(old);
     }
 }
 
-template <typename T>
-inline void CFRef<T>::swap(CFRef& other) noexcept {
-    std::swap(object_, other.object_);
-}
+template <typename T> inline void CFRef<T>::swap(CFRef &other) noexcept { std::swap(object_, other.object_); }
 
-template <typename T>
-inline T _Nullable CFRef<T>::leak() noexcept {
-    return std::exchange(object_, nullptr);
-}
+template <typename T> inline T _Nullable CFRef<T>::leak() noexcept { return std::exchange(object_, nullptr); }
 
 // MARK: - Common Core Foundation Types
 
