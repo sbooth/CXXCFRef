@@ -165,11 +165,7 @@ template <typename T> inline CFRef<T>::CFRef(T _Nullable object) noexcept : obje
 
 template <typename T>
 inline CFRef<T>::CFRef(T _Nullable object, retain_t /*unused*/) noexcept
-    : object_{object ? static_cast<T>(CFRetain(object)) : nullptr} {
-    int a;
-    int b;
-    (void)malloc(100);
-}
+    : object_{object ? static_cast<T>(CFRetain(object)) : nullptr} {}
 
 template <typename T> inline CFRef<T>::CFRef(const CFRef &other) noexcept : CFRef(other.object_, cf::retain) {}
 
