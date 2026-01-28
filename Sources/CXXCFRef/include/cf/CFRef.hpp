@@ -165,12 +165,12 @@ template <typename T> inline CFRef<T>::CFRef(T _Nullable object) noexcept : obje
 
 template <typename T>
 inline CFRef<T>::CFRef(T _Nullable object, retain_t /*unused*/) noexcept
-    : object_{object ? static_cast<T>(CFRetain(object)) : nullptr} {}
+    : object_{object != nullptr ? static_cast<T>(CFRetain(object)) : nullptr} {}
 
 template <typename T> inline CFRef<T>::CFRef(const CFRef &other) noexcept : CFRef(other.object_, cf::retain) {}
 
 template <typename T> inline auto CFRef<T>::operator=(const CFRef &other) noexcept -> CFRef & {
-    reset(other.object_ ? static_cast<T>(CFRetain(other.object_)) : nullptr);
+    reset(other.object_ != nullptr ? static_cast<T>(CFRetain(other.object_)) : nullptr);
     return *this;
 }
 
@@ -194,8 +194,8 @@ template <typename T> inline bool CFRef<T>::isEqual(const CFRef &other) const no
 }
 
 template <typename T> inline bool CFRef<T>::isEqual(CFTypeRef _Nullable other) const noexcept {
-    return (!object_ && (other == nullptr)) ||
-           (object_ && (other != nullptr) && CFEqual(static_cast<CFTypeRef>(object_), other));
+    return (object_ == nullptr && other == nullptr) ||
+           (object_ != nullptr && other != nullptr && CFEqual(static_cast<CFTypeRef>(object_), other));
 }
 
 template <typename T> inline T _Nullable CFRef<T>::get() const & noexcept { return object_; }
@@ -206,7 +206,7 @@ template <typename T> inline T _Nullable *_Nonnull CFRef<T>::put() & noexcept {
 }
 
 template <typename T> inline void CFRef<T>::reset(T _Nullable object) noexcept {
-    if (auto old = std::exchange(object_, object); old) {
+    if (auto old = std::exchange(object_, object); old != nullptr) {
         CFRelease(old);
     }
 }
